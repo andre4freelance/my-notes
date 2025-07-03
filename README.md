@@ -93,7 +93,7 @@ sudo usermod -aG wheel username
 ```bash
 ssh-keygen -t rsa -b 4096
 ```
-test
+After public key has been generated, you can paste SSH Public Key into SSH and GPG Keys menu in your GitHub Profile
 
 ### Test SSH Connection to GitHub
 
