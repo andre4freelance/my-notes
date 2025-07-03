@@ -114,7 +114,19 @@ git config --global user.name "username"
 
 ### Edit the sshd\_config File
 
-Modify the `Port` line inside `/etc/ssh/sshd_config` to your desired port, e.g., `2022`.
+Open the configuration file using `nano`:
+
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+
+Find the line that says `#Port 22`, remove the `#` symbol, and change the port number to your desired value, for example:
+
+```
+Port 2022
+```
+
+> **Note:** Do not forget to remove the `#` at the beginning of the line to enable the configuration.
 
 ### Add the New Port to firewalld
 
