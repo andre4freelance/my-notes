@@ -1,9 +1,0 @@
-change port in /etc/ssh/sshd_config
-
-sudo firewall-cmd --permanent --add-port=2022/tcp
-sudo firewall-cmd --reload
-
-sudo dnf install policycoreutils-python-utils
-sudo semanage port -a -t ssh_port_t -p tcp 2022
-
-reboot
