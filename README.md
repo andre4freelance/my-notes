@@ -123,7 +123,7 @@ sudo nano /etc/ssh/sshd_config
 Find the line that says `#Port 22`, remove the `#` symbol, and change the port number to your desired value, for example:
 
 ```
-Port 2022
+port 2022
 ```
 
 > **Note:** Do not forget to remove the `#` at the beginning of the line to enable the configuration.
