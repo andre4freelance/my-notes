@@ -145,11 +145,11 @@ sudo semanage port -a -t ssh_port_t -p tcp 2022
 ### Restart ssh service
 
 ```bash
-systemctl restart sshd
+sudo systemctl restart sshd
 ```
 
 ### If after restart ssh and still can't connect you must be reboot your machine
 
 ```bash
-reboot
+sudo reboot
 ```
