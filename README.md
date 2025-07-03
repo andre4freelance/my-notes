@@ -1,104 +1,143 @@
-# My notes
+# My Notes
 
-This note summarizes some coamands that I often use but also often forget so I just note it here.
+This note summarizes some commands that I often use but tend to forget, so I’ve written them down here.
 
-## 1. Instalasi QEMU 4.2.0
+## 1. Installing QEMU 4.2.0
 
-Ikuti langkah-langkah di bawah ini untuk menginstal QEMU versi 4.2.0 dari sumbernya:
+Follow the steps below to install QEMU version 4.2.0 from source:
 
-1. Update repository and install depedencies :
-   ```bash
-   sudo apt-get update [cite: 2]
-   sudo apt-get install libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev ninja-build [cite: 2]
-Download and Extract QEMU:
+### Step 1: Update Repository and Install Dependencies
 
-    ``bash
-    wget [https://download.qemu.org/qemu-4.2.0.tar.xz](https://download.qemu.org/qemu-4.2.0.tar.xz) [cite: 2]
-    tar xf qemu-4.2.0.tar.xz [cite: 2]
-    cd qemu-4.2.0 [cite: 2]
-Konfig, compile, and install QEMU:
+```bash
+sudo apt-get update
+sudo apt-get install libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev ninja-build
+```
 
-    ``bash
-    ./configure --prefix=/opt/qemu-4.2.0 [cite: 2]
-    make -j$(nproc) [cite: 2]
-    sudo make install [cite: 2]
-Tambahkan direktori binari QEMU ke PATH Anda dan verifikasi instalasi:
+### Step 2: Download and Extract QEMU
 
-Bash
+```bash
+wget https://download.qemu.org/qemu-4.2.0.tar.xz
 
-echo 'export PATH=/opt/qemu-4.2.0/bin:$PATH' >> ~/.bashrc [cite: 2]
-source ~/.bashrc [cite: 2]
-/opt/qemu-4.2.0/bin/qemu-system-x86_64 --version [cite: 2]
-2. Manajemen Mesin Virtual QEMU
-Membuat dan Mem-boot Gambar Disk VM Baru
-Buat berkas gambar QCOW2 baru untuk VM Anda:
+# Extract the tarball
 
-Bash
+tar xf qemu-4.2.0.tar.xz
+cd qemu-4.2.0
+```
 
-qemu-img create -f qcow mikrotik.img 256M [cite: 4]
-Boot gambar VM dengan berkas instalasi ISO (misalnya, Mikrotik.iso):
+### Step 3: Configure, Compile, and Install QEMU
 
-Bash
+```bash
+./configure --prefix=/opt/qemu-4.2.0
+make -j$(nproc)
+sudo make install
+```
 
-qemu-system-x86_64 mikrotik.img -cdrom mikrotik.iso -boot d [cite: 4]
-Buka gambar VM setelah instalasi:
+### Step 4: Add QEMU to PATH and Verify
 
-Bash
+```bash
+echo 'export PATH=/opt/qemu-4.2.0/bin:$PATH' >> ~/.bashrc
+source ~/.bashrc
+/opt/qemu-4.2.0/bin/qemu-system-x86_64 --version
+```
 
-qemu-system-x86_64 mikrotik.img -boot c [cite: 4]
-3. Membuat Pengguna Baru dengan Akses sudo
-Untuk Sistem Debian/Ubuntu
-Bash
+---
 
-sudo useradd -m -s /bin/bash username 
-sudo passwd username 
-sudo usermod -aG sudo username 
-Untuk Sistem RHEL/CentOS/Rocky Linux
-Bash
+## 2. Managing QEMU Virtual Machines
 
-sudo useradd -m -s /bin/bash username 
-sudo passwd username 
-sudo usermod -aG wheel username 
+### Create and Boot a New Disk Image
 
-Catatan: Ada perintah duplikat sudo usermod -aG sudo me di sumber RHEL yang tampaknya merupakan kesalahan ketik atau perintah yang tidak lengkap dan tidak digunakan dalam ringkasan ini. 
+#### Create a QCOW2 Image File
 
-4. Pengaturan GitHub
-Hasilkan kunci SSH baru:
+```bash
+qemu-img create -f qcow2 mikrotik.img 256M
+```
 
-Bash
+#### Boot VM Image with ISO Installer (e.g., Mikrotik.iso)
 
-ssh-keygen -t rsa -b 4096 [cite: 5]
-Uji koneksi SSH Anda ke GitHub:
+```bash
+qemu-system-x86_64 mikrotik.img -cdrom mikrotik.iso -boot d
+```
 
-Bash
+#### Boot Installed VM Image
 
-ssh -T git@github.com [cite: 5]
-Konfigurasi informasi pengguna Git global Anda:
+```bash
+qemu-system-x86_64 mikrotik.img -boot c
+```
 
-Bash
+---
 
-git config --global user.email "user@mail.com" [cite: 5]
-git config --global user.name "username" [cite: 5]
-5. Mengubah Port SSH di Rocky Linux
-Ubah port SSH di berkas konfigurasi sshd_config:
+## 3. Creating a New User with sudo Access
 
-Bash
+### For Debian/Ubuntu Systems
 
-# Edit /etc/ssh/sshd_config dan ubah baris 'Port' menjadi port yang diinginkan (misalnya, 2022) [cite: 3]
-Tambahkan port baru ke firewalld:
+```bash
+sudo useradd -m -s /bin/bash username
+sudo passwd username
+sudo usermod -aG sudo username
+```
 
-Bash
+### For RHEL/CentOS/Rocky Linux Systems
 
-sudo firewall-cmd --permanent --add-port=2022/tcp [cite: 3]
-sudo firewall-cmd --reload [cite: 3]
-Instal policycoreutils-python-utils (jika belum terinstal) dan konfigurasikan SELinux untuk port baru:
+```bash
+sudo useradd -m -s /bin/bash username
+sudo passwd username
+sudo usermod -aG wheel username
+```
 
-Bash
+---
 
-sudo dnf install policycoreutils-python-utils [cite: 3]
-sudo semanage port -a -t ssh_port_t -p tcp 2022 [cite: 3]
-Reboot sistem untuk menerapkan perubahan:
+## 4. GitHub Setup
 
-Bash
+### Generate a New SSH Key
 
-reboot [cite: 3]
+```bash
+ssh-keygen -t rsa -b 4096
+```
+test
+
+### Test SSH Connection to GitHub
+
+```bash
+ssh -T git@github.com
+```
+
+### Configure Git Global User Info
+
+```bash
+git config --global user.email "user@mail.com"
+git config --global user.name "username"
+```
+
+---
+
+## 5. Changing SSH Port on Rocky Linux
+
+### Edit the sshd\_config File
+
+Modify the `Port` line inside `/etc/ssh/sshd_config` to your desired port, e.g., `2022`.
+
+### Add the New Port to firewalld
+
+```bash
+sudo firewall-cmd --permanent --add-port=2022/tcp
+sudo firewall-cmd --reload
+```
+
+### Configure SELinux for the New Port
+
+```bash
+sudo dnf install policycoreutils-python-utils
+sudo semanage port -a -t ssh_port_t -p tcp 2022
+```
+
+### Restart ssh service
+
+```bash
+systemctl restart sshd
+```
+
+### If after restart ssh and still can't connect you must be reboot your machine
+
+```bash
+reboot
+```
