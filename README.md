@@ -153,30 +153,30 @@ sudo systemctl restart sshd
 ```bash
 sudo reboot
 ```
+## 6. Setting Up Juniper vQFX in GNS3
 
-## 6. Setup Juniper vQFX
+### First, connect the QFX-PFE interface em1 to the QFX-RE em1 interface.
 
-### First connect interface QFX-PFE interface em1 to QFX-RE em1
+### Next, log in to QFX-RE using the following credentials:
 
-### After that login to QFX-RE using following this one
+- **User:** root  
+- **Password:** Juniper
 
-User      : root
-Password  : Juniper
-
-### After login you can see to much interface config, so you can reconfig with following commands
+### After logging in, you may see many interface configurations. You can reconfigure them with the following commands:
 
 ```bash
-{linecard:1}[edit]
-root@SW-QFX-2# delete interfaces
-{linecard:1}[edit]
-root@SW-QFX-2# set interfaces em1 unit 0 family inet address 169.254.0.2/24
-{linecard:1}[edit]
-root@SW-QFX-2# commit
+{linecard:0}[edit]
+root@SW-QFX-1# delete interfaces
+{linecard:0}[edit]
+root@SW-QFX-1# set interfaces em1 unit 0 family inet address 169.254.0.2/24
+{linecard:0}[edit]
+root@SW-QFX-1# commit
 ```
 
-### After commit make sure ping to QFX-PFE is running
+### After committing, make sure you can ping QFX-PFE:
+
 ```bash
-{linecard:1}[edit]
+{linecard:0}[edit]
 root@SW-QFX-1# run ping 169.254.0.1    
 PING 169.254.0.1 (169.254.0.1): 56 data bytes
 64 bytes from 169.254.0.1: icmp_seq=0 ttl=64 time=4.434 ms
@@ -188,19 +188,19 @@ PING 169.254.0.1 (169.254.0.1): 56 data bytes
 round-trip min/avg/max/stddev = 2.544/4.185/5.576/1.250 ms
 ```
 
-### If connection RE to PFE is running well, you must cek virtual chassis
+### If the connection from RE to PFE is working, check the virtual chassis status:
 
 ```bash
-{linecard:1}[edit]
+{linecard:0}[edit]
 root@SW-QFX-1#
 ```
 
-If you stil see "linecard", the mean virtual chassis not exist
+If you still see "linecard", it means the virtual chassis does not exist.
 
-### Request reactive virtual chassis
+### To reactivate the virtual chassis, run:
 
 ```bash
-{linecard:1}
+{linecard:0}
 root@SW-QFX-1> request virtual-chassis reactivate 
 
 This member split from a virtual chassis. Please make sure that no active
@@ -209,49 +209,50 @@ switch belonging to this virtual chassis has conflicting configuration.
 Do you want to continue ? [yes,no] (no) yes 
 ```
 
-After request reactive virtual chassis successfully, you can relog the QFX-RE and see "linecard" replace with "master"
-You can validate with this command dan make sure are same output
+After successfully reactivating the virtual chassis, log out and log back in to QFX-RE. You should now see "master" instead of "linecard".
+
+You can validate the setup with the following commands and ensure the output matches:
 
 ```bash
-{master:1}
+{master:0}
 root@SW-QFX-1> show chassis fpc pic-status    
 Slot 1   Online       QFX10002-36Q                                  
   PIC 0  Online       48x 10G-SFP+
 
-{master:1}
+{master:0}
 root@SW-QFX-1> show interfaces terse          
 Interface               Admin Link Proto    Local                 Remote
 gr-0/0/0                up    up
-pfe-1/0/0               up    up
-pfe-1/0/0.16383         up    up   inet    
+pfe-0/0/0               up    up
+pfe-0/0/0.16383         up    up   inet    
                                    inet6   
-pfh-1/0/0               up    up
-pfh-1/0/0.16383         up    up   inet    
-pfh-1/0/0.16384         up    up   inet    
-xe-1/0/0                up    up
-xe-1/0/0.16386          up    up  
-xe-1/0/1                up    up
-xe-1/0/1.16386          up    up  
-xe-1/0/2                up    up
-xe-1/0/2.16386          up    up  
-xe-1/0/3                up    up
-xe-1/0/3.16386          up    up  
-xe-1/0/4                up    up
-xe-1/0/4.16386          up    up  
-xe-1/0/5                up    up
-xe-1/0/5.16386          up    up  
-xe-1/0/6                up    up
-xe-1/0/6.16386          up    up  
-xe-1/0/7                up    up
-xe-1/0/7.16386          up    up        
-xe-1/0/8                up    up
-xe-1/0/8.16386          up    up  
-xe-1/0/9                up    up
-xe-1/0/9.16386          up    up  
-xe-1/0/10               up    up
-xe-1/0/10.16386         up    up  
-xe-1/0/11               up    up
-xe-1/0/11.16386         up    up  
+pfh-0/0/0               up    up
+pfh-0/0/0.16383         up    up   inet    
+pfh-0/0/0.16384         up    up   inet    
+xe-0/0/0                up    up
+xe-0/0/0.16386          up    up  
+xe-0/0/1                up    up
+xe-0/0/1.16386          up    up  
+xe-0/0/2                up    up
+xe-0/0/2.16386          up    up  
+xe-0/0/3                up    up
+xe-0/0/3.16386          up    up  
+xe-0/0/4                up    up
+xe-0/0/4.16386          up    up  
+xe-0/0/5                up    up
+xe-0/0/5.16386          up    up  
+xe-0/0/6                up    up
+xe-0/0/6.16386          up    up  
+xe-0/0/7                up    up
+xe-0/0/7.16386          up    up        
+xe-0/0/8                up    up
+xe-0/0/8.16386          up    up  
+xe-0/0/9                up    up
+xe-0/0/9.16386          up    up  
+xe-0/0/10               up    up
+xe-0/0/10.16386         up    up  
+xe-0/0/11               up    up
+xe-0/0/11.16386         up    up  
 bme0                    up    up
 bme0.0                  up    up   inet     128.0.0.1/2     
                                             128.0.0.4/2     
@@ -295,6 +296,6 @@ tap                     up    up
 vme                     up    up
 vtep                    up    up
 
-{master:1}
+{master:0}
 root@SW-QFX-1> 
 ```
