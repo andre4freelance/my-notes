@@ -153,3 +153,148 @@ sudo systemctl restart sshd
 ```bash
 sudo reboot
 ```
+
+## 6. Setup Juniper vQFX
+
+### First connect interface QFX-PFE interface em1 to QFX-RE em1
+
+### After that login to QFX-RE using following this one
+
+User      : root
+Password  : Juniper
+
+### After login you can see to much interface config, so you can reconfig with following commands
+
+```bash
+{linecard:1}[edit]
+root@SW-QFX-2# delete interfaces
+{linecard:1}[edit]
+root@SW-QFX-2# set interfaces em1 unit 0 family inet address 169.254.0.2/24
+{linecard:1}[edit]
+root@SW-QFX-2# commit
+```
+
+### After commit make sure ping to QFX-PFE is running
+```bash
+{linecard:1}[edit]
+root@SW-QFX-1# run ping 169.254.0.1    
+PING 169.254.0.1 (169.254.0.1): 56 data bytes
+64 bytes from 169.254.0.1: icmp_seq=0 ttl=64 time=4.434 ms
+64 bytes from 169.254.0.1: icmp_seq=1 ttl=64 time=2.544 ms
+64 bytes from 169.254.0.1: icmp_seq=2 ttl=64 time=5.576 ms
+^C
+--- 169.254.0.1 ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max/stddev = 2.544/4.185/5.576/1.250 ms
+```
+
+### If connection RE to PFE is running well, you must cek virtual chassis
+
+```bash
+{linecard:1}[edit]
+root@SW-QFX-1#
+```
+
+If you stil see "linecard", the mean virtual chassis not exist
+
+### Request reactive virtual chassis
+
+```bash
+{linecard:1}
+root@SW-QFX-1> request virtual-chassis reactivate 
+
+This member split from a virtual chassis. Please make sure that no active
+switch belonging to this virtual chassis has conflicting configuration.
+
+Do you want to continue ? [yes,no] (no) yes 
+```
+
+After request reactive virtual chassis successfully, you can relog the QFX-RE and see "linecard" replace with "master"
+You can validate with this command dan make sure are same output
+
+```bash
+{master:1}
+root@SW-QFX-1> show chassis fpc pic-status    
+Slot 1   Online       QFX10002-36Q                                  
+  PIC 0  Online       48x 10G-SFP+
+
+{master:1}
+root@SW-QFX-1> show interfaces terse          
+Interface               Admin Link Proto    Local                 Remote
+gr-0/0/0                up    up
+pfe-1/0/0               up    up
+pfe-1/0/0.16383         up    up   inet    
+                                   inet6   
+pfh-1/0/0               up    up
+pfh-1/0/0.16383         up    up   inet    
+pfh-1/0/0.16384         up    up   inet    
+xe-1/0/0                up    up
+xe-1/0/0.16386          up    up  
+xe-1/0/1                up    up
+xe-1/0/1.16386          up    up  
+xe-1/0/2                up    up
+xe-1/0/2.16386          up    up  
+xe-1/0/3                up    up
+xe-1/0/3.16386          up    up  
+xe-1/0/4                up    up
+xe-1/0/4.16386          up    up  
+xe-1/0/5                up    up
+xe-1/0/5.16386          up    up  
+xe-1/0/6                up    up
+xe-1/0/6.16386          up    up  
+xe-1/0/7                up    up
+xe-1/0/7.16386          up    up        
+xe-1/0/8                up    up
+xe-1/0/8.16386          up    up  
+xe-1/0/9                up    up
+xe-1/0/9.16386          up    up  
+xe-1/0/10               up    up
+xe-1/0/10.16386         up    up  
+xe-1/0/11               up    up
+xe-1/0/11.16386         up    up  
+bme0                    up    up
+bme0.0                  up    up   inet     128.0.0.1/2     
+                                            128.0.0.4/2     
+                                            128.0.0.17/2    
+                                            128.0.0.63/2    
+cbp0                    up    up
+dsc                     up    up
+em0                     up    up
+em0.0                   up    up   eth-switch
+em1                     up    up
+em1.0                   up    up   inet     169.254.0.2/24  
+em2                     up    up
+em2.32768               up    up   inet     192.168.1.2/24  
+em3                     up    up
+em4                     up    up        
+em4.32768               up    up   inet     192.0.2.2/24    
+em5                     up    up
+em6                     up    up
+em7                     up    up
+em8                     up    up
+em9                     up    up
+em10                    up    up
+em11                    up    up
+esi                     up    up
+fti0                    up    up
+gre                     up    up
+ipip                    up    up
+irb                     up    up
+jsrv                    up    up
+jsrv.1                  up    up   inet     128.0.0.127/2   
+lo0                     up    up
+lo0.0                   up    up   inet     10.20.20.20         --> 0/0
+                                   inet6    fe80::205:860f:fc71:aa00
+lo0.16385               up    up   inet    
+lsi                     up    up
+mtun                    up    up
+pimd                    up    up
+pime                    up    up        
+pip0                    up    up
+tap                     up    up
+vme                     up    up
+vtep                    up    up
+
+{master:1}
+root@SW-QFX-1> 
+```
